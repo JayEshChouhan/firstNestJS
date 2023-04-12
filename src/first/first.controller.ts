@@ -10,14 +10,17 @@ import {
   Req,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
+import { FirstService } from './first.service';
+import { FirstDto } from './first.dto';
 
 @ApiTags('First')
 @Controller('First')
 export class FirstController {
+  constructor(private readonly firstService: FirstService) {}
+
   @Get()
-  firstGet(): string {
-    return 'This is my first NestJS Controller';
+  firstGet(): FirstDto[] {
+    return this.firstService.getAllData();
   }
   @Get(':id')
   firstGetById(@Param('id') id: string) {
@@ -28,8 +31,8 @@ export class FirstController {
     return `This action returns all cats (limit: ${query.limit} items)`;
   }
   @Post()
-  firstPost(@Req() request: Request): string {
-    return `First data created ${request}`;
+  firstPost(@Body() request: FirstDto): any {
+    return this.firstService.add(request);
   }
   @Put(':id')
   update(@Param('id') id: string, @Body() updateCatDto: any) {
